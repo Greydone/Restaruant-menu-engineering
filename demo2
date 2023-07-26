@@ -1,0 +1,36 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+def classificar_pratos(pratos):
+    # Calcular o lucro por saída para cada prato
+    pratos['lucro_por_saida'] = pratos['lucro_percentual'] / pratos['quantidade_saidas']
+
+    # Calcular média de saídas e média de lucro por saída para classificação
+    media_saidas = pratos['quantidade_saidas'].mean()
+    media_lucro_por_saida = pratos['lucro_por_saida'].mean()
+
+    # Classificar os pratos
+    pratos['classificacao'] = ''
+    pratos.loc[(pratos['quantidade_saidas'] > media_saidas) & (pratos['lucro_por_saida'] > media_lucro_por_saida), 'classificacao'] = 'Estrela'
+    pratos.loc[(pratos['quantidade_saidas'] > media_saidas) & (pratos['lucro_por_saida'] < media_lucro_por_saida), 'classificacao'] = 'Burro de carga'
+    pratos.loc[(pratos['quantidade_saidas'] < media_saidas) & (pratos['lucro_por_saida'] < media_lucro_por_saida), 'classificacao'] = 'Cão'
+    pratos.loc[(pratos['quantidade_saidas'] < media_saidas) & (pratos['lucro_por_saida'] > media_lucro_por_saida), 'classificacao'] = 'Enigma'
+
+def plotar_pratos(pratos):
+    for classificacao, cor, marcador in [('Estrela', 'green', '*'), ('Burro de carga', 'blue', 'o'), ('Cão', 'red', 's'), ('Enigma', 'yellow', '^')]:
+        pratos_classificados = pratos[pratos['classificacao'] == classificacao]
+        plt.scatter(pratos_classificados['quantidade_saidas'], pratos_classificados['lucro_percentual'], color=cor, marker=marcador, label=classificacao)
+
+    plt.xlabel('Quantidade de Saídas')
+    plt.ylabel('% de Lucro')
+    plt.legend()
+    plt.title('Classificação dos Pratos')
+    plt.grid(True)
+    plt.show()
+
+# Leitura do arquivo de dados (assumindo que o arquivo tem as colunas 'nome', 'quantidade_saidas' e 'lucro_percentual')
+nome_arquivo = 'caminho do arquivo aqui'
+pratos = pd.read_csv(nome_arquivo)
+
+classificar_pratos(pratos)
+plotar_pratos(pratos)
