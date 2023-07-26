@@ -1,0 +1,53 @@
+pip install matplotlib
+
+import matplotlib.pyplot as plt
+
+def classificar_pratos(pratos):
+    # Calcular o lucro por saída para cada prato
+    for prato in pratos:
+        prato['lucro_por_saida'] = prato['lucro_percentual'] / prato['quantidade_saidas']
+
+    # Calcular média de saídas e média de lucro por saída para classificação
+    media_saidas = sum(prato['quantidade_saidas'] for prato in pratos) / len(pratos)
+    media_lucro_por_saida = sum(prato['lucro_por_saida'] for prato in pratos) / len(pratos)
+
+    # Classificar os pratos
+    for prato in pratos:
+        if prato['quantidade_saidas'] > media_saidas and prato['lucro_por_saida'] > media_lucro_por_saida:
+            prato['classificacao'] = 'Estrela'
+        elif prato['quantidade_saidas'] > media_saidas and prato['lucro_por_saida'] < media_lucro_por_saida:
+            prato['classificacao'] = 'Burro de carga'
+        elif prato['quantidade_saidas'] < media_saidas and prato['lucro_por_saida'] < media_lucro_por_saida:
+            prato['classificacao'] = 'Cão'
+        else:
+            prato['classificacao'] = 'Enigma'
+
+def plotar_pratos(pratos):
+    for prato in pratos:
+        if prato['classificacao'] == 'Estrela':
+            plt.scatter(prato['quantidade_saidas'], prato['lucro_percentual'], color='green', marker='*', label='Estrela')
+        elif prato['classificacao'] == 'Burro de carga':
+            plt.scatter(prato['quantidade_saidas'], prato['lucro_percentual'], color='blue', marker='o', label='Burro de carga')
+        elif prato['classificacao'] == 'Cão':
+            plt.scatter(prato['quantidade_saidas'], prato['lucro_percentual'], color='red', marker='s', label='Cão')
+        else:
+            plt.scatter(prato['quantidade_saidas'], prato['lucro_percentual'], color='yellow', marker='^', label='Enigma')
+
+    plt.xlabel('Quantidade de Saídas')
+    plt.ylabel('% de Lucro')
+    plt.legend()
+    plt.title('Classificação dos Pratos')
+    plt.grid(True)
+    plt.show()
+
+# Dados fictícios de pratos do restaurante
+pratos = [
+    {'nome': 'Prato 1', 'quantidade_saidas': 100, 'lucro_percentual': 20},
+    {'nome': 'Prato 2', 'quantidade_saidas': 50, 'lucro_percentual': 30},
+    {'nome': 'Prato 3', 'quantidade_saidas': 200, 'lucro_percentual': 10},
+    {'nome': 'Prato 4', 'quantidade_saidas': 80, 'lucro_percentual': 25},
+    {'nome': 'Prato 5', 'quantidade_saidas': 120, 'lucro_percentual': 15},
+]
+
+classificar_pratos(pratos)
+plotar_pratos(pratos)
